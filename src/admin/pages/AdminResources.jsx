@@ -1,10 +1,29 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import AdminSidebar from '../components/AdminSidebar'
 import AdminHeader from '../components/AdminHeader'
+import { userListAPI } from '../../services/alllApi'
+import axiosInstance from '../../api/axiosInstance'
 
 function AdminResources() {
 
   const [currentTab, SetCurrentTab] = useState(1)
+  const [allusers,setAllUsers] = useState([])
+
+  console.log(allusers);
+
+  useEffect(()=>{
+    if(currentTab==2){
+      getAllUsers()
+    }
+  },[currentTab])
+
+  const getAllUsers = async()=>{
+    const result = await userListAPI()
+    if(result.status==200){
+      setAllUsers(result.data)
+    }
+  }
+  
 
   return (
     <div>
@@ -41,17 +60,23 @@ function AdminResources() {
             currentTab == 2 &&
             <div className="md:grid grid-cols-3 my-5 w-full">
               {/* Duplicating Card  */}
-              <div className="shadow rounded p-2 m-2 bg-blue-100 md:my-0">
-                <p className="text-red-500 font-bold text-md">ID:</p>
+              {
+                allusers.length>0 ?
+                allusers?.map(user=>(
+                  <div key={user._id} className="shadow rounded p-2 m-2 bg-blue-100 md:my-0">
+                <p className="text-red-500 font-bold text-md">ID:{user?._id}</p>
                 <div className='flex mt-3 items-center'>
-                  <img width={'80px'} height={'80px'} style={{borderRadius:'50%'}} src="https://png.pngtree.com/png-vector/20231019/ourmid/pngtree-user-profile-avatar-png-image_10211471.png" alt="Book cover image" />
+                  <img style={{ width: '80px', height: '80px', borderRadius: '50%', marginLeft: '15px', objectFit: 'cover' }} src={!user.picture ? "https://img.magnific.com/free-vector/user-blue-gradient_78370-4692.jpg?semt=ais_hybrid&w=740&q=80" : user.picture.startsWith("http") ? user.picture : `${axiosInstance.defaults.baseURL}/uploads/${user.picture}`} alt="profile" />
                   <div className='flex flex-col ml-3 w-full'>
-                    <h1 className="text-blue-600 font-bold text-xl">Username</h1>
-                    <p className="text-x">Mail</p>
-                   
+                    <h1 className="text-blue-600 font-bold text-xl">{user?.username}</h1>
+                    <p className="text-x">{user?.email}</p>
                   </div>
                 </div>
               </div>
+                ))
+                :
+                <div className="">No users</div>
+              }
             </div>
           }
 

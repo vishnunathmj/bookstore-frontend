@@ -27,7 +27,7 @@ function Edit() {
   }, [])
 
   console.log(userDetails);
-  console.log(existingPicture)
+  // console.log(existingPicture)
 
   const handleFileUpload = (e) => {
     // console.log(e.target.files[0]);

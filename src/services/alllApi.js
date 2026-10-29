@@ -59,3 +59,13 @@ export const viewBookAPI = async (id)=>{
 export const buyBookAPI = async (id)=>{
     return await apiService("PUT",`/books/${id}/buy`,{})
 }
+
+// edit admin api : admin settings components when clicked on edit button
+export const adminUpdateAPI = async (adminId,adminData)=>{
+    return await apiService("PUT",`/admin/${adminId}`,adminData)
+}
+
+// get all users : admin resourses components user tab
+export const userListAPI = async ()=>{
+    return await apiService("GET",`/user-list`,{})
+}
