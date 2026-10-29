@@ -43,7 +43,7 @@ function UploadBook() {
             // toast.success("api call")
             const reqBody = new FormData()
             for(let key in bookDetails){
-                if(key !=uploadImage){
+                if(key !="uploadImage"){
                     reqBody.append(key,bookDetails[key])
                 }else{
                     bookDetails.uploadImage.forEach(imageFiles=>{

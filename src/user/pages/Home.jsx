@@ -1,12 +1,19 @@
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import Header from '../components/Header'
 import { FaSearch } from 'react-icons/fa'
 import { getHomeBooksAPI } from '../../services/alllApi'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
+import { searchContext } from '../../contextAPI/ShareContext'
+import { ToastContainer, toast } from 'react-toastify';
 
 function Home() {
 
+  const navigate = useNavigate()
+  const {searchKey,setSearchKey} = useContext(searchContext)
   const [homeBooks,setHomeBooks] = useState([])
+
+  console.log(searchKey);
+  
 
   useEffect(()=>{
     getHomeBooks()
@@ -19,6 +26,21 @@ function Home() {
     }
   }
 
+  const handleSearch = ()=>{
+    if(!searchKey){
+      toast.warning("Please Input a book title")
+    }else if(!sessionStorage.getItem("token")){
+      toast.warning("Please Login to Explore")
+      setTimeout(()=>{
+        navigate('/login')
+      },2000)
+    }else if(searchKey && sessionStorage.getItem("token")){
+      navigate('/books')
+    }else{
+      toast.error("Something Went Wrong!!!")
+    }
+  }
+
   return (
     <>
       <Header />
@@ -28,8 +50,8 @@ function Home() {
           <h1 className="text-7xl font-bold">Wonderful Book</h1>
           <p>Gift your family and friends a book</p>
           <div>
-            <input type="text" placeholder='Search a Book' className='bg-white p-2 rounded-3xl w-100 text-black' />
-            <FaSearch className='text-gray-500 cursor-pointer' style={{ marginTop: '-27px', marginLeft: '375px' }} />
+            <input onChange={(e)=>setSearchKey(e.target.value)} type="text" placeholder='Search a Book' className='bg-white p-2 rounded-3xl w-100 text-black' />
+            <FaSearch onClick={handleSearch} className='text-gray-500 cursor-pointer' style={{ marginTop: '-27px', marginLeft: '375px' }} />
           </div>
         </div>
       </div>
@@ -93,6 +115,8 @@ function Home() {
         </div>
 
       </section>
+      {/* toastify container */}
+      <ToastContainer position='top-center' theme='colored' autoClose='3000' />
     </>
   )
 }
