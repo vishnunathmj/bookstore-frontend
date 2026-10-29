@@ -3,8 +3,10 @@ import { FaEye, FaEyeSlash, FaUser } from 'react-icons/fa'
 import { Link, useNavigate } from 'react-router-dom'
 import { useFormik } from 'formik'
 import * as Yup from 'yup'
-import { loginAPI, registerAPI } from '../services/alllApi'
+import { googleLoginAPI, loginAPI, registerAPI } from '../services/alllApi'
 import { ToastContainer, toast } from 'react-toastify';
+import { GoogleLogin } from '@react-oauth/google';
+import { jwtDecode } from "jwt-decode";
 
 function Auth({ insideRegister }) {
 
@@ -36,23 +38,23 @@ function Auth({ insideRegister }) {
     }
   })
 
-  const handleLogin = async(userData)=>{
+  const handleLogin = async (userData) => {
     const result = await loginAPI(userData)
     console.log(result);
-    if(result.status==200){
+    if (result.status == 200) {
       toast.success("Successfully Logged in")
-      sessionStorage.setItem("token",result.data.token)
-      sessionStorage.setItem("user",JSON.stringify(result.data.user))
+      sessionStorage.setItem("token", result.data.token)
+      sessionStorage.setItem("user", JSON.stringify(result.data.user))
       setTimeout(() => {
-        if(result.data.user.role=="admin"){
+        if (result.data.user.role == "admin") {
           navigate('/admin')
         }
-        else{
+        else {
           navigate('/')
         }
       }, 2500);
     }
-    else{
+    else {
       toast.error(result)
     }
   }
@@ -60,13 +62,34 @@ function Auth({ insideRegister }) {
   const handleRegister = async (userData) => {
     const result = await registerAPI(userData)
     console.log(result);
-    if(result.status){
+    if (result.status) {
       toast.success("Successfully Regitered.. please Login")
     }
-    else{
+    else {
       toast.error(result)
     }
     navigate("/login")
+  }
+
+  const handleGoogleLogin = async (credentialResponse) => {
+    console.log("inside Google login");
+    const { email, name, picture } = jwtDecode(credentialResponse.credential)
+    console.log(email, name, picture);
+    // api call
+    const result = await googleLoginAPI({ username: name, email, password: "googlePassword", picture })
+    if (result.status == 200) {
+      toast.success("Successfully Logged in")
+      sessionStorage.setItem("token", result.data.token)
+      sessionStorage.setItem("user", JSON.stringify(result.data.user))
+      setTimeout(() => {
+        if (result.data.user.role == "admin") {
+          navigate('/admin')
+        }
+        else {
+          navigate('/')
+        }
+      }, 2500);
+    }
   }
 
   return (
@@ -123,7 +146,14 @@ function Auth({ insideRegister }) {
               <div className=" my-5 text-center">
                 <p>-------------------or-------------------</p>
                 <div className="mt-2 flex justify-center items-center w-full">
-                  Google Authentication
+                  <GoogleLogin
+                    onSuccess={credentialResponse => {
+                      handleGoogleLogin(credentialResponse)
+                    }}
+                    onError={() => {
+                      console.log('Login Failed');
+                    }}
+                  />
                 </div>
               </div>
             }

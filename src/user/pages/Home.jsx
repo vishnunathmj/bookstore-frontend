@@ -1,8 +1,24 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import Header from '../components/Header'
 import { FaSearch } from 'react-icons/fa'
+import { getHomeBooksAPI } from '../../services/alllApi'
+import { Link } from 'react-router-dom'
 
 function Home() {
+
+  const [homeBooks,setHomeBooks] = useState([])
+
+  useEffect(()=>{
+    getHomeBooks()
+  },[])
+
+  const getHomeBooks = async()=>{
+    const result = await getHomeBooksAPI()
+    if(result.status==200){
+      setHomeBooks(result.data)
+    }
+  }
+
   return (
     <>
       <Header />
@@ -24,17 +40,23 @@ function Home() {
         <h1 className='text-3xl my-2'>Explore Our Latest Collection</h1>
         <div className="md:grid grid-cols-4 md:my-0">
           {/* Duplicating Card  */}
-          <div className="shadow rounded p-3 m-4 md:my-0">
-            <img width={'100%'} height={'300px'} src="https://www.picmaker.com/assets/images/bookcovermaker/template-4.png" alt="Book cover image" />
+          {
+            homeBooks.length>0?
+            homeBooks.map(book=>(
+              <div className="shadow rounded p-3 m-4 md:my-0">
+            <img width={'100%'} height={'300px'} src={book?.imageURL} alt="Book cover image" />
             <div className='flex flex-col justify-center items-center mt-4'>
-              <h1 className="text-blue-600 font-bold text-xl">Author</h1>
-              <h1 className="text-lg">Title</h1>
-              <h1 className='font-bold text-red-600'>Price</h1>
+              <h1 className="text-blue-600 font-bold text-xl">{book?.author}</h1>
+              <h1 className="text-lg">{book?.title}</h1>
+              <h1 className='font-bold text-red-600'>₹{book?.discountPrice}</h1>
             </div>
           </div>
+            )):
+            <p className="font-bold text-center my-3">Loading...</p>
+          }
         </div>
         {/* Button */}
-        <button className='bg-black text-white px-3 py-2 rounded cursor-pointer'>Explore More</button>
+        <Link to={'/books'} className='bg-black text-white px-3 py-2 rounded cursor-pointer'>Explore More</Link>
       </section>
 
       {/* Featured Author */}
