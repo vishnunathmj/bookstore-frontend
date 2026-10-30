@@ -1,7 +1,16 @@
 import React from 'react'
 import { FaPowerOff } from 'react-icons/fa'
+import { useNavigate } from 'react-router-dom'
 
 function AdminHeader() {
+
+  const navigate = useNavigate()
+
+  const logOut = () => {
+    sessionStorage.clear()
+    navigate('/')
+  }
+
   return (
     <>
       {/*header Top  */}
@@ -10,7 +19,7 @@ function AdminHeader() {
           <img width={'50px'} height={'50px'} src="https://pngimg.com/uploads/book/book_PNG51090.png" alt="Books" />
           <h1 className="text-2xl ">BOOKSTORE</h1>
         </div>
-        <button className="flex items-center px-2 py-1 bg-black text-white border-black hover:bg-white hover:text-black">Logout<FaPowerOff className='ms-2'/></button>
+        <button onClick={logOut} className="flex items-center px-2 py-1 bg-black text-white border-black hover:bg-white hover:text-black">Logout<FaPowerOff className='ms-2' /></button>
       </div>
       {/* header marquee */}
       <div className="w-full p-3 bg-black text-white">

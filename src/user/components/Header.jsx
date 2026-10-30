@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react'
 import { FaFacebook, FaInstagram, FaPowerOff, FaTwitter, FaUser } from "react-icons/fa";
 import { FaGear } from 'react-icons/fa6';
 import { IoMenu } from 'react-icons/io5';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import axiosInstance from '../../api/axiosInstance'
 
 function Header() {
@@ -12,6 +12,7 @@ function Header() {
   const [dp, setDp] = useState("")
   const [userId, setUserId] = useState("")
   const [dropDown, setDropDown] = useState(false)
+  const navigate = useNavigate()
 
   useEffect(() => {
     if (sessionStorage.getItem("token") && sessionStorage.getItem("user")) {
@@ -22,6 +23,16 @@ function Header() {
       setUserId(user._id)
     }
   }, [token])
+
+  const logOut= ()=>{
+    sessionStorage.clear()
+    setToggle(false)
+    setToken("")
+    setDp("")
+    setUserId("")
+    setDropDown(false)
+    navigate('/')
+  }
 
   return (
     <>
@@ -59,7 +70,7 @@ function Header() {
                   dropDown &&
                   <div className="absolute right-0 z-10 mt-2 w-40 bg-white shadow ring-1 ring-black/5 p-2 focus:outline-hidden">
                     <Link to={`/profile/${userId}`} className='flex items-center text-gray-600 text-sm px-3 py-2'><FaGear className='me-1' />profile</Link>
-                    <Link className='flex items-center text-gray-600 text-sm px-3 py-2'><FaPowerOff className='me-1' />LogOut</Link>
+                    <Link onClick={logOut} className='flex items-center text-gray-600 text-sm px-3 py-2'><FaPowerOff className='me-1' />LogOut</Link>
                   </div>
                 }
               </div>
@@ -86,7 +97,7 @@ function Header() {
                 dropDown &&
                 <div className="absolute right-0 z-10 mt-2 w-40 bg-white shadow ring-1 ring-black/5 p-2 focus:outline-hidden">
                   <Link to={`/profile/${userId}`} className='flex items-center text-gray-600 text-sm px-3 py-2'><FaGear className='me-1' />profile</Link>
-                  <Link className='flex items-center text-gray-600 text-sm px-3 py-2'><FaPowerOff className='me-1' />LogOut</Link>
+                  <Link onClick={logOut} className='flex items-center text-gray-600 text-sm px-3 py-2'><FaPowerOff className='me-1' />LogOut</Link>
                 </div>
               }
             </div>

@@ -69,3 +69,13 @@ export const adminUpdateAPI = async (adminId,adminData)=>{
 export const userListAPI = async ()=>{
     return await apiService("GET",`/user-list`,{})
 }
+
+// get all books : admin resourses components user tab
+export const bookListAPI = async ()=>{
+    return await apiService("GET",`/book-list`,{})
+}
+
+// update book ststus : admin resourses components user tab
+export const editBookStatusAPI = async (id)=>{
+    return await apiService("PUT",`/book/${id}`,{})
+}
