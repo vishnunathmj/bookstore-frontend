@@ -1,7 +1,8 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { FaPen, FaPlus } from 'react-icons/fa'
 import { ToastContainer, toast } from 'react-toastify';
-import { addBookAPI } from '../../services/alllApi';
+import { addBookAPI, getBookDetailsAIAPI } from '../../services/alllApi';
+import useDebounce from '../../hooks/useDebounce';
 
 
 
@@ -11,8 +12,39 @@ function UploadBook() {
     })
     const [preview, setPreview] = useState("")
     const [previewList, setPreviewList] = useState([])
+    const debounceTitlesearch = useDebounce(bookDetails.title, 1000)
 
-    console.log(bookDetails);
+    useEffect(() => {
+        if (debounceTitlesearch) {
+            console.log("Gemini Api call");
+            generateBookAbstractAI()
+        }
+    }, [debounceTitlesearch])
+
+    // console.log(bookDetails);
+
+    const generateBookAbstractAI = async () => {
+        try {
+            const result = await getBookDetailsAIAPI(debounceTitlesearch);
+            console.log("API Response:", result.data);
+
+            if (result.data.content) {
+                setBookDetails({
+                    ...bookDetails,
+                    abstract: result.data.content.abstract,
+                    isbn: result.data.content.isbn,
+                    author: result.data.content.author
+                });
+            } else {
+                console.error("Abstract not found in API response:", result.data);
+            }
+        } catch (error) {
+            console.error(
+                "Error generating book abstract:",
+                error.response?.data || error.message
+            );
+        }
+    };
 
     const handleUploadImage = (e) => {
         const imageFiles = e.target.files[0]
@@ -34,28 +66,28 @@ function UploadBook() {
         setPreview("")
     }
 
-    const handleAddBook = async ()=>{
-        const {title,author,imageURL,pages,price,discountPrice,abstract,publisher,isbn,language ,category,uploadImage}=bookDetails
-        if(!title || !author || !imageURL || !pages || !price || !discountPrice || !abstract || !publisher || !isbn || !language || !category || !uploadImage){
+    const handleAddBook = async () => {
+        const { title, author, imageURL, pages, price, discountPrice, abstract, publisher, isbn, language, category, uploadImage } = bookDetails
+        if (!title || !author || !imageURL || !pages || !price || !discountPrice || !abstract || !publisher || !isbn || !language || !category || !uploadImage) {
             toast.info("please fill the form completely")
-        }else{
+        } else {
             // api call
             // toast.success("api call")
             const reqBody = new FormData()
-            for(let key in bookDetails){
-                if(key !="uploadImage"){
-                    reqBody.append(key,bookDetails[key])
-                }else{
-                    bookDetails.uploadImage.forEach(imageFiles=>{
-                        reqBody.append("uploadImage",imageFiles)
+            for (let key in bookDetails) {
+                if (key != "uploadImage") {
+                    reqBody.append(key, bookDetails[key])
+                } else {
+                    bookDetails.uploadImage.forEach(imageFiles => {
+                        reqBody.append("uploadImage", imageFiles)
                     })
                 }
             }
             const result = await addBookAPI(reqBody)
             console.log(result);
-            if(result.status==201){
+            if (result.status == 201) {
                 toast.success("Book Added Successfully")
-            }else{
+            } else {
                 toast.warning(result)
             }
             resetForm()

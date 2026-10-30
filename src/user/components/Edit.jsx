@@ -26,7 +26,7 @@ function Edit() {
     }
   }, [])
 
-  console.log(userDetails);
+  // console.log(userDetails);
   // console.log(existingPicture)
 
   const handleFileUpload = (e) => {
@@ -73,7 +73,7 @@ function Edit() {
       }
       // api call
       const result = await userupdateAPI(id,reqBody)
-      console.log(result);
+      // console.log(result);
       if(result.status==200){
         toast.success("User profile updated, Please login again")
         setTimeout(() => {

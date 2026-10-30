@@ -16,16 +16,19 @@ import Pnf from './pages/Pnf'
 
 import Preloader from './components/Preloader'
 import Footer from './components/Footer'
-import { useState } from 'react'
+import { useContext, useState } from 'react'
 import PaymentFailed from './user/pages/PaymentFailed'
 import PaymentSuccess from './user/pages/PaymentSuccess'
+import { routeContext } from './contextAPI/RouteGaurd'
 
 
 
 function App() {
 
 
+  const { role, setRole, authorisedUser, setAuthorisedUser } = useContext(routeContext)
   const [isLoading, setIsLoading] = useState(true)
+
 
   setTimeout(() => {
     setIsLoading(false)
@@ -36,18 +39,30 @@ function App() {
       <Routes>
         <Route path='/' element={isLoading ? <Preloader /> : <Home />} />
         <Route path='/contact' element={<Contact />} />
-        <Route path='/books' element={<Books />} />
+
         <Route path='/login' element={<Auth />} />
         <Route path='/register' element={<Auth insideRegister />} />
 
-        <Route path='/profile/:id' element={<Profile />} />
-        <Route path='/book/:id' element={<View />} />
-        <Route path='/failed' element={<PaymentFailed />} />
-         <Route path='/success' element={<PaymentSuccess />}/>
+        {
+          role == "user" &&
+          <>
+            <Route path='/books' element={<Books />} />
+            <Route path='/profile/:id' element={<Profile />} />
+            <Route path='/book/:id' element={<View />} />
+            <Route path='/failed' element={<PaymentFailed />} />
+            <Route path='/success' element={<PaymentSuccess />} />
+          </>
+        }
 
-        <Route path='/admin' element={<AdminDashboard />} />
-        <Route path='/admin/resources' element={<AdminResources />} />
-        <Route path='/admin/settings' element={<AdminSettings />} />
+        {
+          role == "admin" &&
+          <>
+            <Route path='/admin' element={<AdminDashboard />} />
+            <Route path='/admin/resources' element={<AdminResources />} />
+            <Route path='/admin/settings' element={<AdminSettings />} />
+          </>
+
+        }
 
         <Route path='/*' element={<Pnf />} />
 

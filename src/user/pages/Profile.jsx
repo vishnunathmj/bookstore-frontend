@@ -30,7 +30,7 @@ function Profile() {
       <div style={{ height: '200px' }} className="bg-black"></div>
       <div style={{ width: '230px', height: '230px', borderRadius: '50%', marginTop: '-130px', marginLeft: '50px' }} className="bg-white">
         {/* <img style={{ width: '200px', height: '200px', borderRadius: '50%', marginLeft: '15px' }} src={dp} alt="user" /> */}
-       <img style={{ width: '80px', height: '80px', borderRadius: '50%', marginLeft: '15px', objectFit: 'cover' }} src={!dp ? "https://img.magnific.com/free-vector/user-blue-gradient_78370-4692.jpg?semt=ais_hybrid&w=740&q=80" : dp.startsWith("http") ? dp : `${axiosInstance.defaults.baseURL}/uploads/${dp}`} alt="profile" />
+       <img style={{ width: '200px', height: '200px', borderRadius: '50%', marginLeft: '15px', objectFit: 'cover' }} src={!dp ? "https://img.magnific.com/free-vector/user-blue-gradient_78370-4692.jpg?semt=ais_hybrid&w=740&q=80" : dp.startsWith("http") ? dp : `${axiosInstance.defaults.baseURL}/uploads/${dp}`} alt="profile" />
       </div>
       <div className="md:flex justify-between px-5">
         <div className="flex items-center">

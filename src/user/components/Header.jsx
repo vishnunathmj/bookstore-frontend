@@ -1,12 +1,17 @@
 
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { FaFacebook, FaInstagram, FaPowerOff, FaTwitter, FaUser } from "react-icons/fa";
 import { FaGear } from 'react-icons/fa6';
 import { IoMenu } from 'react-icons/io5';
 import { Link, useNavigate } from 'react-router-dom';
 import axiosInstance from '../../api/axiosInstance'
+import { routeContext } from '../../contextAPI/RouteGaurd';
 
 function Header() {
+
+  const { role, setRole, authorisedUser, setAuthorisedUser } = useContext(routeContext)
+
+
   const [toggle, setToggle] = useState(false)
   const [token, setToken] = useState("")
   const [dp, setDp] = useState("")
@@ -24,8 +29,9 @@ function Header() {
     }
   }, [token])
 
-  const logOut= ()=>{
+  const logOut = () => {
     sessionStorage.clear()
+    setAuthorisedUser(false)
     setToggle(false)
     setToken("")
     setDp("")
